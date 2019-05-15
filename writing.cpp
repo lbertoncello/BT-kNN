@@ -2,21 +2,48 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <map>
+#include <iterator>
+#include <iomanip>
 
 #include "writing.h"
 
-void write_results(vector<string> classes, const char* output_file)
+void write_results(vector<string> classes, const char *output_file)
 {
-	ofstream saida;
+	ofstream output;
+	output_style(output);
 
-	saida.open(output_file);
+	output.open(output_file);
 	
 	for (int i = 0; i < classes.size(); i++)
 	{
-		saida << classes[i] << endl;
+		output << classes[i] << endl;
 	}
 
-	saida.close();
+	output.close();
+}
+
+void write_probabilities(vector<map<string, float>> posterior_probabilities, const char *output_file)
+{
+	ofstream output;
+	output_style(output);
+
+	output.open(output_file);
+
+	for (int i = 0; i < posterior_probabilities.size(); i++)
+	{
+		for (map<string, float>::iterator it = posterior_probabilities[i].begin(); it != posterior_probabilities[i].end(); ++it)
+		{
+			output << it->first << " Prob.: " << it->second << " | ";
+		}
+		output << endl;
+	}
+}
+
+void output_style(ofstream &saida)
+{
+	saida << std::fixed;
+	saida << std::setprecision(6);
 }
 
 void print_times(double tempo_insercao, double tempo_rebalanceamento, double tempo_non_full, double tempo_metricas, double tempo_leitura, double tempo_calculo, int qtdLeituras, int qtdInsercoes, int qtd_comparacoes_insercao, bool houve_rebalanceamento)
@@ -35,13 +62,13 @@ void print_times(double tempo_insercao, double tempo_rebalanceamento, double tem
 	cout << "-------------------------------" << endl;
 }
 
-void write_times(string nome_arquivo, vector<double> tempo_insercao, vector<double> tempo_rebalanceamento, vector<double> tempo_non_full, vector<double> tempo_metricas, vector<double> tempo_leitura, vector<double> tempo_calculo, int qtdLeituras, int qtdInsercoes, int qtd_comparacoes_insercao, bool houve_rebalanceamento) 
+void write_times(string nome_arquivo, vector<double> tempo_insercao, vector<double> tempo_rebalanceamento, vector<double> tempo_non_full, vector<double> tempo_metricas, vector<double> tempo_leitura, vector<double> tempo_calculo, int qtdLeituras, int qtdInsercoes, int qtd_comparacoes_insercao, bool houve_rebalanceamento)
 {
 	ofstream saida;
-	
+
 	saida.open(nome_arquivo.c_str());
 
-		for (int i = 0; i < tempo_insercao.size(); i++)
+	for (int i = 0; i < tempo_insercao.size(); i++)
 	{
 		saida << "-------------------------------" << endl;
 		saida << "Tempo Inserção: " << tempo_insercao[i] << endl;

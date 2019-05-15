@@ -27,14 +27,20 @@ int main(int argc, char* argv[])
 	cout << "Classificando" << endl;
 	
 	string mkdir = "mkdir -p ";
-	string arquivo = "classifieds.txt";
+	string output_classification = "classifieds.txt";
 	string dir;
 	string barra = "/";
 	for(int i = 0; i < k.size(); i++)
 	{
 		dir = output_dir + barra + to_string(i) + barra;
 		system((mkdir + dir).c_str());
-		knn.classify(k[i], unclassified_documents_file.c_str(), (dir + arquivo).c_str());
+		if(argc > 8) {
+			string output_probabilities = "prob.txt";
+
+			knn.classify(k[i], unclassified_documents_file.c_str(), (dir + output_classification).c_str(), classes_file.c_str(), (dir + output_probabilities).c_str());
+		} else {
+			knn.classify(k[i], unclassified_documents_file.c_str(), (dir + output_classification).c_str());
+		}
 	}
 	
 	cout << "Classificacao realizada com sucesso!" << endl;

@@ -2,12 +2,13 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#include <map>
 
 #include "reading.h"
 
 using namespace std;
 
-int number_of_lines(const char* train_file)
+int number_of_lines(const char *train_file)
 {
 	string line;
 	ifstream train(train_file);
@@ -22,7 +23,7 @@ int number_of_lines(const char* train_file)
 	return stoi(line.substr(0, 1), nullptr);
 }
 
-int number_of_columns(const char* train_file)
+int number_of_columns(const char *train_file)
 {
 	string line;
 	ifstream train(train_file);
@@ -65,7 +66,7 @@ vector<double> read_vector(string line)
 }
 
 //Le o vetor na linha indicada pela posicao
-vector<double> read_at_index(ifstream& train, int pos)
+vector<double> read_at_index(ifstream &train, int pos)
 {
 	int previous_pos = train.tellg();
 
@@ -80,7 +81,7 @@ vector<double> read_at_index(ifstream& train, int pos)
 	return v;
 }
 
-string read_class_at_index(const char* class_file, int line_number)
+string read_class_at_index(const char *class_file, int line_number)
 {
 	string line;
 	ifstream class_f(class_file);
@@ -93,11 +94,11 @@ string read_class_at_index(const char* class_file, int line_number)
 	return line;
 }
 
-vector<string> read_classes(const char* class_file)
+vector<string> read_classes(const char *classes_file)
 {
 	string line;
 	vector<string> classes;
-	ifstream class_f(class_file);
+	ifstream class_f(classes_file);
 
 	while (getline(class_f, line))
 	{
@@ -107,7 +108,24 @@ vector<string> read_classes(const char* class_file)
 	return classes;
 }
 
-vector<vector<double>> read_unclassified_documents(const char* documents_file)
+map<string, float> read_distinct_classes(const char *classes_file)
+{
+	//Mapeia as classes existentes
+	string line;
+	map<string, float> classses_map;
+	ifstream class_f(classes_file);
+
+	while (getline(class_f, line))
+	{
+		if(classses_map.find(line) == classses_map.end()) {
+			classses_map.insert( pair<string, float>(line, 0) );
+		}
+	}
+	
+	return classses_map;
+}
+
+vector<vector<double>> read_unclassified_documents(const char *documents_file)
 {
 	string line;
 	vector<double> document;
@@ -123,7 +141,7 @@ vector<vector<double>> read_unclassified_documents(const char* documents_file)
 	return documents;
 }
 
-void print_file(const char* train_file)
+void print_file(const char *train_file)
 {
 	string line;
 	ifstream train(train_file);
@@ -151,7 +169,7 @@ for (int i = 0; i < length; i++)
 }
 */
 
-vector<int> read_k(const char* k_file)
+vector<int> read_k(const char *k_file)
 {
 	vector<int> k;
 	string line;

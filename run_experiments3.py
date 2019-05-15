@@ -16,6 +16,8 @@ def run_tests(dirname, k_list, k_file, number_of_nodes, decision_factor, output_
 		start = time.time()
 		os.system("./knn %s/treino.txt %s/classes.txt %s/entrada.txt %s %s %s %s" % (dataset_dirname, dataset_dirname, 
 			dataset_dirname, k_file, number_of_nodes, decision_factor, output_dir + "/" + str(i) ))
+		print("./knn %s/treino.txt %s/classes.txt %s/entrada.txt %s %s %s %s" % (dataset_dirname, dataset_dirname, 
+			dataset_dirname, k_file, number_of_nodes, decision_factor, output_dir + "/" + str(i) ))
 		end = time.time()
 
 		durations.append(end - start)
