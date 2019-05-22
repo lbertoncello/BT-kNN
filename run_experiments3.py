@@ -6,7 +6,7 @@ import analyzes_results3 as ar
 
 n_splits = 1
 		
-def run_tests(dirname, k_list, k_file, number_of_nodes, decision_factor, output_dir):
+def run_tests(similarities_file, dirname, k_list, k_file, number_of_nodes, decision_factor, output_dir):
 	durations = []
 
 	for i in range(n_splits):
@@ -14,9 +14,9 @@ def run_tests(dirname, k_list, k_file, number_of_nodes, decision_factor, output_
 		dataset_dirname = "%s/%s" % (dirname, i)
 
 		start = time.time()
-		os.system("./knn %s/treino.txt %s/classes.txt %s/entrada.txt %s %s %s %s" % (dataset_dirname, dataset_dirname, 
+		os.system("./knn %s %s/treino.txt %s/classes.txt %s/entrada.txt %s %s %s %s prob" % (similarities_file, dataset_dirname, dataset_dirname, 
 			dataset_dirname, k_file, number_of_nodes, decision_factor, output_dir + "/" + str(i) ))
-		print("./knn %s/treino.txt %s/classes.txt %s/entrada.txt %s %s %s %s" % (dataset_dirname, dataset_dirname, 
+		print("./knn %s %s/treino.txt %s/classes.txt %s/entrada.txt %s %s %s %s prob" % (similarities_file, dataset_dirname, dataset_dirname, 
 			dataset_dirname, k_file, number_of_nodes, decision_factor, output_dir + "/" + str(i) ))
 		end = time.time()
 
@@ -103,15 +103,16 @@ def read_k(k_file):
 	return k
 
 def main():
-	dirname = sys.argv[1]
-	k_file = sys.argv[2]
-	number_of_nodes = sys.argv[3]
-	decision_factor = sys.argv[4]
-	output_dir = sys.argv[5]
+	similarities_file = sys.argv[1]
+	dirname = sys.argv[2]
+	k_file = sys.argv[3]
+	number_of_nodes = sys.argv[4]
+	decision_factor = sys.argv[5]
+	output_dir = sys.argv[6]
 	
 	k_list = read_k(k_file)
 			
-	run_tests(dirname, k_list, k_file, number_of_nodes, decision_factor, output_dir)	
+	run_tests(similarities_file, dirname, k_list, k_file, number_of_nodes, decision_factor, output_dir)	
 
 
 if __name__ == "__main__":

@@ -21,10 +21,11 @@ bool comparator(Document *d1, Document *d2)
 	return d1->similarity < d2->similarity;
 }
 
-void kNN::train(const char *train_file, const char *classes_file)
+void kNN::train(const char *similarities_file, const char *train_file, const char *classes_file)
 {
 	this->train_file.open(train_file, std::ifstream::in);
-	this->model.generate_tree(this->train_file, classes_file);
+	this->sims.init(similarities_file);
+	this->model.generate_tree(this->train_file, this->sims, classes_file);
 }
 
 string most_frequent_class(vector<Document *> nearest_neighbors, int k)
@@ -123,17 +124,17 @@ map<string, float> posterior_probabilities(vector<Document *> nearest_neighbors,
 void kNN::probabilities(int k, const char *unclassified_documents_file, const char *classes_file, const char *prob_output_file)
 {
 	vector<string> classes;
-	vector<vector<double>> documents = read_unclassified_documents(unclassified_documents_file);
+	vector<int> documents_id = read_unclassified_documents(unclassified_documents_file);
 	map<string, float> distinct_classes = read_distinct_classes(classes_file);
 	vector<map<string, float>> classes_probabilities;
 
-	for (int i = 0; i < documents.size(); i++)
+	for (int i = 0; i < documents_id.size(); i++)
 	{
 		vector<Document *> nearest_neighbors;
 
 		this->train_file.clear();
 
-		model.most_similar_documents(this->train_file, documents[i], k, nearest_neighbors);
+		model.most_similar_documents(this->sims, documents_id[i], k, nearest_neighbors);
 
 		//nearest_neighbors.pop_back();
 		std::sort(nearest_neighbors.rbegin(), nearest_neighbors.rend(), comparator);
@@ -146,15 +147,15 @@ void kNN::probabilities(int k, const char *unclassified_documents_file, const ch
 void kNN::classify(int k, const char *unclassified_documents_file, const char *results_output_file)
 {
 	vector<string> classes;
-	vector<vector<double>> documents = read_unclassified_documents(unclassified_documents_file);
+	vector<int> documents_id = read_unclassified_documents(unclassified_documents_file);
 
-	for (int i = 0; i < documents.size(); i++)
+	for (int i = 0; i < documents_id.size(); i++)
 	{
 		vector<Document *> nearest_neighbors;
 
 		this->train_file.clear();
 
-		model.most_similar_documents(this->train_file, documents[i], k, nearest_neighbors);
+		model.most_similar_documents(this->sims, documents_id[i], k, nearest_neighbors);
 
 		if (nearest_neighbors.size() > 1)
 		{
@@ -174,17 +175,17 @@ void kNN::classify(int k, const char *unclassified_documents_file, const char *r
 void kNN::classify(int k, const char *unclassified_documents_file, const char *results_output_file, const char *classes_file, const char *prob_output_file)
 {
 	vector<string> classes;
-	vector<vector<double>> documents = read_unclassified_documents(unclassified_documents_file);
+	vector<int> documents_id = read_unclassified_documents(unclassified_documents_file);
 	map<string, float> distinct_classes = read_distinct_classes(classes_file);
 	vector<map<string, float>> classes_probabilities;
 
-	for (int i = 0; i < documents.size(); i++)
+	for (int i = 0; i < documents_id.size(); i++)
 	{
 		vector<Document *> nearest_neighbors;
 
 		this->train_file.clear();
 
-		model.most_similar_documents(this->train_file, documents[i], k, nearest_neighbors);
+		model.most_similar_documents(this->sims, documents_id[i], k, nearest_neighbors);
 
 		if (nearest_neighbors.size() > 1)
 		{

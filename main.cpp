@@ -10,17 +10,18 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	string train_file = argv[1];
-	string classes_file = argv[2];
-	string unclassified_documents_file = argv[3];
-	string k_file = argv[4];
-	int number_of_nodes = stoi(argv[5]);
-	double decision_factor = stod(argv[6]);
-	string output_dir = argv[7];
+	string similarities_file = argv[1];
+	string train_file = argv[2];
+	string classes_file = argv[3];
+	string unclassified_documents_file = argv[4];
+	string k_file = argv[5];
+	int number_of_nodes = stoi(argv[6]);
+	double decision_factor = stod(argv[7]);
+	string output_dir = argv[8];
 	kNN knn(number_of_nodes, decision_factor);
 
 	cout << "Treinando" << endl;
-	knn.train(train_file.c_str(), classes_file.c_str());
+	knn.train(similarities_file.c_str(), train_file.c_str(), classes_file.c_str());
 
 	vector<int> k = read_k(k_file.c_str());
 
@@ -34,7 +35,7 @@ int main(int argc, char* argv[])
 	{
 		dir = output_dir + barra + to_string(i) + barra;
 		system((mkdir + dir).c_str());
-		if(argc > 8) {
+		if(argc > 9) {
 			string output_probabilities = "prob.txt";
 
 			knn.classify(k[i], unclassified_documents_file.c_str(), (dir + output_classification).c_str(), classes_file.c_str(), (dir + output_probabilities).c_str());

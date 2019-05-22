@@ -117,14 +117,16 @@ map<string, float> read_distinct_classes(const char *classes_file)
 
 	while (getline(class_f, line))
 	{
-		if(classses_map.find(line) == classses_map.end()) {
-			classses_map.insert( pair<string, float>(line, 0) );
+		if (classses_map.find(line) == classses_map.end())
+		{
+			classses_map.insert(pair<string, float>(line, 0));
 		}
 	}
-	
+
 	return classses_map;
 }
 
+/*
 vector<vector<double>> read_unclassified_documents(const char *documents_file)
 {
 	string line;
@@ -136,6 +138,23 @@ vector<vector<double>> read_unclassified_documents(const char *documents_file)
 	{
 		document = read_vector(line);
 		documents.push_back(document);
+	}
+
+	return documents;
+}
+*/
+
+vector<int> read_unclassified_documents(const char *documents_file)
+{
+	string line;
+	int document_id;
+	vector<int> documents;
+	ifstream documents_f(documents_file);
+
+	while (getline(documents_f, line))
+	{
+		document_id = std::atoi(line.c_str());
+		documents.push_back(document_id);
 	}
 
 	return documents;

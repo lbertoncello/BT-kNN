@@ -7,6 +7,7 @@
 
 #include "reading.h"
 #include "metrics.h"
+#include "similarities.h"
 
 using namespace std;
 
@@ -15,7 +16,7 @@ extern double decision_factor;
 
 typedef struct document
 {
-	//Posicao no arquivo de treinos em que o dado se encontra
+	//Linha no arquivo de similaridades em que o dado se encontra
 	int index;
 	string doc_class;
 	double similarity = 0;
@@ -36,7 +37,7 @@ public:
 									 // A utility function to insert a new key in the subtree rooted with 
 									 // this node. The assumption is, the node must be non-full when this 
 									 // function is called 
-	void insertNonFull(ifstream& train_file, vector<double> v, int index, string doc_class);
+	void insertNonFull(Similarities& sims, int index, string doc_class);
 
 	// A utility function to split the child y of this node. i is index of y in 
 	// child array C[].  The Child y must be full when this function is called 
@@ -51,9 +52,9 @@ public:
 								// Make BTree friend of this so that we can access private members of this 
 								// class in BTree functions 
 
-	Document most_similar_document(ifstream& train_file, vector<double> v, double maior, Document* greatest_sim_doc);
+	Document most_similar_document(Similarities &sims, int indexI, double maior, Document* greatest_sim_doc);
 
-	void most_similar_documents(ifstream& train_file, vector<double> v, int k, vector<Document*>& greatest_docs, double maior = 0, Document* greatest_sim_doc = nullptr);
+	void most_similar_documents(Similarities &sims, int indexI, int k, vector<Document*>& greatest_docs, double maior = 0, Document* greatest_sim_doc = nullptr);
 
 	friend class BTree;
 };
@@ -87,30 +88,29 @@ public:
 	}
 	*/
 
-	Document most_similar_document(ifstream& train_file, vector<double> v, double maior = 0, Document* greatest_sim_doc = nullptr)
+	Document most_similar_document(Similarities &sims, int indexI, double maior = 0, Document* greatest_sim_doc = nullptr)
 	{
-		vector<double> u = read_at_index(train_file, root->documents[0].index);
-		double similarity = cosine_similarity(v, u);
+		int indexJ = root->documents[0].index;
+		double similarity = sims.read_element_at(indexI, indexJ);
 
-		return root->most_similar_document(train_file, v, similarity, &root->documents[0]);
+		return root->most_similar_document(sims, indexI, similarity, &root->documents[0]);
 	}
 
-	void most_similar_documents(ifstream& train_file, vector<double> v, int k, vector<Document*>& greatest_docs, double maior = 0, Document* greatest_sim_doc = nullptr)
+	void most_similar_documents(Similarities &sims, int indexI, int k, vector<Document*>& greatest_docs, double maior = 0, Document* greatest_sim_doc = nullptr)
 	{
-		vector<double> u = read_at_index(train_file, root->documents[0].index);
-
-		double similarity = cosine_similarity(v, u);
+		int indexJ = root->documents[0].index;
+		double similarity = sims.read_element_at(indexI, indexJ);
 
 		root->documents[0].similarity = similarity;
 		greatest_docs.push_back(&root->documents[0]);
 
-		return root->most_similar_documents(train_file, v, k, greatest_docs, similarity, &root->documents[0]);
+		return root->most_similar_documents(sims, indexI, k, greatest_docs, similarity, &root->documents[0]);
 	}
 
 	//Document BTree::most_similar_document(char* train_file, vector<double> v);
 
 	// The main function that inserts a new key in this B-Tree 
-	void insert(ifstream& train_file, vector<double> v, int index, string doc_class);
+	void insert(Similarities& sims, int index, string doc_class);
 
-	void generate_tree(ifstream& train_file, const char* classes_file);
+	void generate_tree(ifstream& train_file, Similarities& sims, const char* classes_file);
 };
