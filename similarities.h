@@ -9,7 +9,7 @@ class Similarities
 private:
     int mtx_first_position;
     vector<int> mtx_header;
-    int mtx_line_size = sizeof(double);
+    int mtx_line_size = sizeof(float);
     ifstream mtx_file;
 
     void read_header();

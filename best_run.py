@@ -17,7 +17,7 @@ def find_best(dirname, k_file, number_of_nodes, decision_factor, number_of_tries
     while i < number_of_tries:
         temp_experiment_dir = './temp-%s/Experiments/%s/' % (experiment_id, j)
         
-        os.system('python3 run_experiments3.py %s %s %s %s %s' % (current_dirname, k_file, number_of_nodes, decision_factor, temp_experiment_dir))
+        os.system('python3 run_experiments3.py ../%s/similaridades.bin %s %s %s %s %s' % (dirname, current_dirname, k_file, number_of_nodes, decision_factor, temp_experiment_dir))
 
         for n in range(number_of_k):
             results_filename = '%s/0/%s/results.txt' % (temp_experiment_dir, str(n))
